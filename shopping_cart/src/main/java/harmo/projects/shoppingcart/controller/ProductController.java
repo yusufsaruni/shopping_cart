@@ -1,6 +1,7 @@
 package harmo.projects.shoppingcart.controller;
 
 import harmo.projects.shoppingcart.dto.ProductDto;
+import harmo.projects.shoppingcart.exceptions.AlreadyExistException;
 import harmo.projects.shoppingcart.exceptions.ResourceNotFoundException;
 import harmo.projects.shoppingcart.model.Product;
 import harmo.projects.shoppingcart.request.AddProductRequest;
@@ -9,6 +10,7 @@ import harmo.projects.shoppingcart.response.ApiResponse;
 import harmo.projects.shoppingcart.service.product.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -41,17 +43,18 @@ public class ProductController {
         }
     }
 
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping("/add")
     public ResponseEntity<ApiResponse> addProduct(@RequestBody AddProductRequest request) {
         try {
             Product product = productService.addProduct(request);
             return ResponseEntity.ok(new ApiResponse("success", product));
-        } catch (Exception e) {
-            return ResponseEntity.status(INTERNAL_SERVER_ERROR)
+        } catch (AlreadyExistException e) {
+            return ResponseEntity.status(CONFLICT)
                     .body(new ApiResponse(e.getMessage(),null));
         }
     }
-
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PutMapping("/product/{productId}/update")
     public ResponseEntity<ApiResponse> updateProduct(@RequestBody UpdateProductRequest request,
                                                      @PathVariable Long productId) {
@@ -64,6 +67,7 @@ public class ProductController {
         }
     }
 
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @DeleteMapping("/product/{productId}/delete")
     public ResponseEntity<ApiResponse> deleteProduct(@PathVariable Long productId) {
         try {

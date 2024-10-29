@@ -37,7 +37,7 @@ public class CartController {
                         // map Product to ProductDto
                         ProductDto productDto = modelMapper.map(item.getProduct(), ProductDto.class);
                         // set ProductDto on CartItemDto
-                        cartItemDto.setProductDto(productDto);
+                        cartItemDto.setProduct(productDto);
                         return cartItemDto;
                     })
                     .collect(Collectors.toSet());

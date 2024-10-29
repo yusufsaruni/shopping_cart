@@ -24,7 +24,7 @@ public class OrderController {
     private final ModelMapper modelMapper;
 
     @PostMapping("/order")
-    public ResponseEntity<ApiResponse> createOrder(Long userId) {
+    public ResponseEntity<ApiResponse> createOrder(@RequestParam Long userId) {
         try {
             Order order = orderService.placeOrder(userId);
             OrderDto createOrder = modelMapper.map(order, OrderDto.class);
